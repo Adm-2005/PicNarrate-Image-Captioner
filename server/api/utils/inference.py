@@ -2,12 +2,7 @@ import torch
 import torch.nn as nn
 from PIL import Image
 from torchvision import transforms
-from torchvision.models import mobilenet_v3_small
-from transformers import T5Tokenizer, T5ForConditionalGeneration
-
-mobilenet_v3_model = mobilenet_v3_small(pretrained=True)
-tokenizer = T5Tokenizer.from_pretrained("google-t5/t5-small")
-decoder = T5ForConditionalGeneration.from_pretrained("google-t5/t5-small")
+from api import mobilenet_v3_model, tokenizer, decoder
 
 class ImageEncoder(nn.Module):
     def __init__(self):
