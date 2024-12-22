@@ -3,6 +3,7 @@ from flask_cors import CORS
 from api.config import Config
 from logging.config import dictConfig
 from torchvision.models import mobilenet_v3_small
+from torchvision.models.mobilenetv3 import MobileNet_V3_Small_Weights
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
 dictConfig(Config.LOGGING_CONFIG)
