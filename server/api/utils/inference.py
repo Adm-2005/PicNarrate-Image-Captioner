@@ -1,8 +1,5 @@
 from PIL import Image
-from transformers import BlipProcessor, BlipForConditionalGeneration
-
-processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
-model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
+from api import model, processor
 
 def infer(image_path: str) -> str:
     """
@@ -19,7 +16,7 @@ def infer(image_path: str) -> str:
         image = Image.open(image_path).convert('RGB')
 
         inputs = processor(image, return_tensors='pt')
-        output = model.generate(**inputs)
+        output = model.generate(**inputs, max_length=50, top_p=0.80, temperature=1.0)
         result = processor.decode(output[0], skip_special_tokens=True).capitalize() 
 
         return result
