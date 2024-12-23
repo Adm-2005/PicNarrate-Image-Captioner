@@ -5,6 +5,7 @@ base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 load_dotenv(dotenv_path=os.path.join(base_dir, '.env'))
 
 class Config:
+    MODEL_DIR = os.path.join(base_dir, 'models')
     IMAGE_DIR = os.path.join(base_dir, 'uploads', 'images')
     MAX_IMAGE_SIZE = 7 * 1024 * 1024 # 7MB
     ALLOWED_EXTENSIONS = os.environ.get('ALLOWED_EXTENSIONS', ['jpeg', 'jpg', 'png'])

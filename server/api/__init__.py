@@ -1,10 +1,11 @@
+import os
+import torch
 from flask import Flask
 from flask_cors import CORS
 from api.config import Config
 from logging.config import dictConfig
-from torchvision.models import mobilenet_v3_small
-from torchvision.models.mobilenetv3 import MobileNet_V3_Small_Weights
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+from transformers import BlipProcessor, BlipForConditionalGeneration, BlipConfig
+
 
 dictConfig(Config.LOGGING_CONFIG)
 
@@ -12,8 +13,11 @@ app = Flask(__name__)
 app.config.from_object(Config)
 CORS(app)
 
-mobilenet_v3_model = mobilenet_v3_small(weights=MobileNet_V3_Small_Weights.IMAGENET1K_V1)
-tokenizer = T5Tokenizer.from_pretrained("google-t5/t5-small")
-decoder = T5ForConditionalGeneration.from_pretrained("google-t5/t5-small")
+processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+
+checkpoint = torch.load(os.path.join(app.config.get("MODEL_DIR"), "blip_quantized_with_config.pth"))
+model = BlipForConditionalGeneration(BlipConfig.from_dict(checkpoint["config"].to_dict()))
+model.load_state_dict(checkpoint["model_state_dict"], strict=False)
+model.eval()
 
 from api import routes

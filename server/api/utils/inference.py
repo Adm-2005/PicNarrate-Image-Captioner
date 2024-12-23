@@ -1,55 +1,8 @@
 import torch
 import torch.nn as nn
 from PIL import Image
-from torchvision import transforms
-from api import mobilenet_v3_model, tokenizer, decoder
+from api import model, processor
 
-class ImageEncoder(nn.Module):
-    def __init__(self):
-        super(ImageEncoder, self).__init__()
-        self.encoder = mobilenet_v3_model
-        self.encoder.eval()
-        self.encoder.classifier = nn.Identity()
-    def forward(self, x):
-        return self.encoder(x)
-
-class FeatureProjector(nn.Module):
-    def __init__(self, input_dim, output_dim):
-        super(FeatureProjector, self).__init__()
-        self.fc1 = nn.Linear(input_dim, output_dim)
-    def forward(self, x):
-        return self.fc1(x)
-
-class CaptioningPipeline(nn.Module):
-    def __init__(self, encoder, projector, decoder, tokenizer):
-        super(CaptioningPipeline, self).__init__()
-        self.encoder = encoder
-        self.projector = projector
-        self.decoder = decoder
-        self.tokenizer = tokenizer
-    def forward(self, image: torch.Tensor):
-        with torch.no_grad():
-            features = self.encoder(image)
-            
-            projected_features = self.projector(features).unsqueeze(1)
-            projected_features = nn.functional.normalize(projected_features, dim=2)
-
-            input_ids = self.tokenizer.encode("caption image", return_tensors="pt")
-            outputs = self.decoder.generate(input_ids=input_ids, encoder_outputs=(projected_features,))
-
-            caption = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-
-        return caption
-
-def load_image(image_path: str) -> torch.Tensor:
-    image = Image.open(image_path).convert('RGB')
-    preprocess = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
-    image = preprocess(image)
-    return image
 
 def infer(image_path: str) -> str:
     """
@@ -63,12 +16,11 @@ def infer(image_path: str) -> str:
 
     """
     try:
-        image = load_image(image_path).unsqueeze(0)
-        encoder = ImageEncoder()
-        projector = FeatureProjector(576, 512)
-        pipeline = CaptioningPipeline(encoder, projector, decoder, tokenizer)
+        image = Image.open(image_path).convert('RGB')
 
-        result = pipeline(image)
+        inputs = processor(image, return_tensors='pt')
+        output = model.generate(**inputs, max_length=50, top_p=0.80, temperature=1.0)
+        result = processor.decode(output[0], skip_special_tokens=True).capitalize() 
 
         return result
 
