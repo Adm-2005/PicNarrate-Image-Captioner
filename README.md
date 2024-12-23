@@ -1,4 +1,5 @@
 # PicNarrate - Image Captioner
+An Image Captioning tool.
 
 ## 🌐 Live Deployment
 The client interface is deployed and accessible at: [https://picnarrate.onrender.com](https://picnarrate.onrender.com)
@@ -12,13 +13,13 @@ The client interface is deployed and accessible at: [https://picnarrate.onrender
 
 ## Project Snapshots
 ### Home Page
-![home]()
+![home](https://github.com/user-attachments/assets/bdfcf4e3-7708-47bb-ad41-25d11e2b8f25)
 
 ### File Upload
-![upload]()
+![upload](https://github.com/user-attachments/assets/b2380478-642c-423a-bc3f-dd9cece1d9fe)
 
 ### Generated Caption
-![caption]()
+![caption](https://github.com/user-attachments/assets/971ae5c6-1425-480e-a361-b9d047a810f2)
 
 ## 📎Important Links
 - **Live Deployment:** [Click here](https://picnarrate.onrender.com)

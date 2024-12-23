@@ -1,5 +1,8 @@
+import torch
+import torch.nn as nn
 from PIL import Image
 from api import model, processor
+
 
 def infer(image_path: str) -> str:
     """
